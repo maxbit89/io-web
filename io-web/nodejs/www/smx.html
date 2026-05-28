@@ -1,0 +1,119 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>Schnitstellen Multiplexer</title>
+        <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy Flow Animation</title>
+    <style>
+        .line {
+            stroke-width: 4;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .energy-flow {
+            stroke-dasharray: 10, 10;
+            animation: dash 2s linear infinite;
+        }
+
+        .energy-flow-off {
+            stroke: rgba(0, 0, 0, 10); /* Fully transparent color */
+        }
+
+        @keyframes dash {
+            to {
+                stroke-dashoffset: -20;
+            }
+        }
+
+        .connector {
+            fill: gray;
+            stroke: black;
+            stroke-width: 2;
+        }    
+    </style>
+    <body>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+        <script src="/js/rssu.js"></script>
+        <h1>Multiplexer</h1>
+        <button id="askToken">acquire Token</button>
+        <button id="dropToken">drop Token</button>
+        <div id="interfaces"></div>
+        <svg width="500" height="500">
+
+        <defs>
+            <!-- Define a gradient for the energy flow -->
+            <linearGradient id="energyGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#00ff00" />
+                <stop offset="50%" stop-color="#00cc00" />
+                <stop offset="100%" stop-color="#009900" />
+            </linearGradient>
+            <linearGradient id="energyGradientInv" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="100%" stop-color="#00ff00" />
+                <stop offset="50%" stop-color="#00cc00" />
+                <stop offset="0%" stop-color="#009900" />
+            </linearGradient>
+        </defs>
+
+        <!-- Group 1: Connector and Text -->
+        <g transform="translate(100, 200)">
+            <rect width="40" height="20" class="connector"/>
+            <text x="20" y="35" font-size="14" text-anchor="middle">M1-IN</text>
+        </g>
+
+        <!-- Group 2: Connector and Text -->
+        <g transform="translate(440, 100)">
+            <rect width="40" height="20" class="connector"/>
+            <text x="20" y="35" font-size="14" text-anchor="middle">M1-0</text>
+        </g>
+
+        <!-- Group 3: Connector and Text -->
+        <g transform="translate(440, 200)">
+            <rect width="40" height="20" class="connector"/>
+            <text x="20" y="35" font-size="14" text-anchor="middle">M1-1</text>
+        </g>
+
+        <!-- Group 4: Connector and Text -->
+        <g transform="translate(440, 300)">
+            <rect width="40" height="20" class="connector"/>
+            <text x="20" y="35" font-size="14" text-anchor="middle">M1-2</text>
+        </g>
+
+        <!-- Group 5: Connector and Text -->
+        <g transform="translate(440, 400)">
+            <rect width="40" height="20" class="connector"/>
+            <text x="20" y="35" font-size="14" text-anchor="middle">M1-3</text>
+        </g>
+
+        <!-- Lines connecting RJ45 connectors to the center -->
+        <path id="line1" class="line energy-flow" d="M 250 250 L 250 110 L 440 110" stroke="url(#energyGradient)" />
+        <path id="line2" class="line energy-flow-off" d="M 250 250 L 270 210 L 440 210" stroke="url(#energyGradient)" />
+        <path id="line3" class="line energy-flow-off" d="M 250 250 L 270 310 L 440 310" stroke="url(#energyGradient)" />
+        <path id="line4" class="line energy-flow-off" d="M 250 250 L 250 410 L 440 410" stroke="url(#energyGradient)" />
+        <path id="line0" class="line energy-flow" d="M 250 250 L 120 250 L 120 240" stroke="url(#energyGradientInv)" />
+
+        </svg>
+
+    <script>
+        function setAnimation(id, enabled) {
+            const line = document.getElementById(id);
+            //const isAnimating = line.classList.contains('energy-flow')
+            if (!enabled) {
+                console.log("off")
+                line.classList.remove('energy-flow');
+                line.classList.add('energy-flow-off');
+            } else {
+                console.log("on")
+                line.classList.add('energy-flow');
+                line.classList.remove('energy-flow-off');
+            }
+        }
+    </script>      
+    </body>
+</html>
