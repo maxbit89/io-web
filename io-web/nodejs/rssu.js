@@ -22,31 +22,24 @@ var sendState = function(socket, broadcast) {
             socket.broadcast.emit("state", interfaces.serialice());
         }
         socket.emit("state", interfaces.serialice());
-    } else {
-        console.log("sendState failed! no socket!");
     }
 }
 
-//Kind of Ugly:
+//**Kind of Ugly:
 //create interfaces here:
 var interfaces = [];
 
-const onIfaceRdy = function(iface) {
-    //iface.addStates(ssu.M1_states)
+interfaces.push(new ssu.interface(ssu.M1, function(iface) {
+    iface.addStates(ssu.M1_states)
     console.log('interface is ready');
     sendState(anysocket, true); //send when ready (check for valid socket in sendState)
     for(gpio of iface.gpios) {
         gpio.write(false);
     }
-};
-
-const onIfaceChange = function () {
+}, function () {
     console.log("interface changed!");
     sendState(anysocket, true); //send when io state changes (check for valid socket in sendState)
-};
-
-interfaces.push(new ssu.interface(ssu.ioCfg.ssuR2.S1, onIfaceRdy, onIfaceChange));
-interfaces.push(new ssu.interface(ssu.ioCfg.ssuR2.S2, onIfaceRdy, onIfaceChange));
+}));
 
 //makes interfaces serialize able for json etc.
 interfaces.__proto__.serialice = function() {
@@ -72,7 +65,6 @@ io.on('connection', function(socket) {
     }
     sendState(socket);
     socket.on('askToken', function() {
-        console.log("askToken!")
         var hasToken = token.acquire(socket)
         socket.emit('askToken', hasToken);
         console.log(hasToken ? "User("+socket.conn.remoteAddress+") has taken token" : "User("+socket.conn.remoteAddress+") couldn't acquire token");
@@ -107,7 +99,7 @@ io.on('connection', function(socket) {
         } else {
             var msg = "You must first successfully acquire the Token.";
             console.log("User("+socket.conn.remoteAddress+"): "+msg);
-            socket.emit('exception', msg);
+            socket.emit('exception', JSON.stringify(msg));
         }
     });
     socket.on("setState", function(ifaceid, stateid) {

@@ -9,10 +9,6 @@ the setup is done with the username admin if you choose another name you need to
 
 Startup the Raspberry pi with the new SD card.
 
-##Enable I2C
-run sudo raspi-config
-go to interfaces and enable i2c (reboot if asked)
-
 ##copy the content of this folder to the pi's home folder.
 Open terminal in this folder
 ssh -r ./ username@hostname-or-ip:~
@@ -21,86 +17,6 @@ ssh -r ./ username@hostname-or-ip:~
 if you want to change the hostname after pi imager set it you can do that via
 cd ~/hat-manager
 ./setHostname.sh <newhostname>
-
-##enable i2c driver in the device tree(linux kernel)
-you can use the hat-manager from the uploaded files to do this
-
-run
-cd hat-manager
-./hat-config.sh
-
-enable the required i2c expanders overlays by setting the option at the address to on.
-
-sudo ./apply.sh is then configuring the overlays.
-sudo reboot
-
-OR if it doesn't work you can do it manually:
-
-open /boot/firmware/config.txt or on older images /boot/config.txt
-check existing SSU hats show up on the i2c bus:
-sudo i2cdetect 1
-WARNING! This program can confuse your I2C bus, cause data loss and worse!
-I will probe file /dev/i2c-1.
-I will probe address range 0x08-0x77.
-Continue? [Y/n] y
-     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
-00:                         -- -- -- -- -- -- -- --
-10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-20: 20 21 22 -- -- -- -- -- -- -- -- -- -- -- -- --
-30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-50: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-70: -- -- -- -- -- -- -- --
-
-add for each SSU HAT an entry with the correct i2c address:
-dtoverlay=mcp23017,addr=0x20
-dtoverlay=mcp23017,addr=0x21
-...
-
-perform a reboot.
-
-##verify i2c driver is working
-after the reboot all devices with a loaded driver don't show the address they say UU:
-sudo i2cdetect 1
-WARNING! This program can confuse your I2C bus, cause data loss and worse!
-I will probe file /dev/i2c-1.
-I will probe address range 0x08-0x77.
-Continue? [Y/n] y
-     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
-00:                         -- -- -- -- -- -- -- --
-10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-20: UU -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-50: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-70: -- -- -- -- -- -- -- --
-
-run gpioinfo
-gpiochip0 - 54 lines:
-        ...
-gpiochip1 - 8 lines:
-        ...
-gpiochip2 - 16 lines:
-        line   0:       unnamed                 output consumer=?
-        line   1:       unnamed                 output consumer=?
-        line   2:       unnamed                 output consumer=?
-        line   3:       unnamed                 output consumer=?
-        line   4:       unnamed                 output consumer=?
-        line   5:       unnamed                 output consumer=?
-        line   6:       unnamed                 output consumer=?
-        line   7:       unnamed                 output consumer=?
-        line   8:       unnamed                 output consumer=?
-        line   9:       unnamed                 output consumer=?
-        line  10:       unnamed                 output consumer=?
-        line  11:       unnamed                 output consumer=?
-        line  12:       unnamed                 output consumer=?
-        line  13:       unnamed                 output consumer=?
-        line  14:       unnamed                 output consumer=?
-        line  15:       unnamed                 output consumer=?
-
-depending on how many i2c devices you should see new gpiochips. (gpiochip2 here should show up. if it says input don't wory the software takes care of that.)
 
 ## update io-web/node packages
 run
