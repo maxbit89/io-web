@@ -1,0 +1,17 @@
+[Unit]
+Description=Remote Schnittstellen Unterbrecher Service
+After=network.target
+
+[Service]
+Type=simple
+ExecStartPre=/bin/sleep 10
+ExecStart=/usr/bin/node /home/admin/io-web/nodejs/rssu.js
+WorkingDirectory=/home/admin/io-web/nodejs/
+StandardOutput=append:/var/log/rssu.log
+StandardError=append:/var/log/rssu.log
+Restart=on-failure
+User=pi
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target
