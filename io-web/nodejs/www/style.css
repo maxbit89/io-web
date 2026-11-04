@@ -1,0 +1,237 @@
+/* ── Connection Breaker v3 · EtherCAT Theme ── */
+
+/* === Reset & Base === */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    /* EtherCAT brand palette */
+    --ec-red:        #ED2228;
+    --ec-red-dim:    #a81a1f;
+    --ec-red-glow:   rgba(237, 34, 40, 0.25);
+    --ec-red-faint:  rgba(237, 34, 40, 0.08);
+    --ec-black:      #241F20;
+    --ec-bg:         #1a1516;
+    --ec-surface:    #241F20;
+    --ec-border:     #3a3233;
+    --ec-border-hi:  #5a4647;
+    --ec-text:       #d8cbcc;
+    --ec-text-dim:   #8a7a7c;
+    --ec-text-bright:#f0e8e8;
+    --ec-ok:         #4caf50;
+    --ec-button:     #c7c7d1;
+    --ec-ok-dim:     #2e6e30;
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--ec-bg);
+    color: var(--ec-text);
+    min-height: 100vh;
+    padding: 2rem;
+    line-height: 1.5;
+}
+
+/* === Title === */
+h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ec-text-bright);
+    border-bottom: 3px solid var(--ec-red);
+    padding-bottom: 0.6rem;
+    margin-bottom: 1.5rem;
+    display: inline-block;
+}
+
+/* === Top-level action buttons (acquire / drop token) === */
+#pullState,
+#askToken,
+#dropToken {
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.55rem 1.4rem;
+    border: 1px solid var(--ec-border);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, box-shadow 0.2s, color 0.2s;
+    margin-right: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+#askToken {
+    background: #1c2e1d;
+    color: #6fd975;
+    border-color: var(--ec-ok-dim);
+}
+
+#askToken:hover {
+    background: #244228;
+    box-shadow: 0 0 14px rgba(76, 175, 80, 0.3);
+    border-color: var(--ec-ok);
+}
+
+#pullState {
+    background: #2e2b53;
+    color: var(--ec-button);
+    border-color: var(--ec-button);
+}
+
+#pullState:hover {
+    background: #585675;
+    box-shadow: 0 0 14px rgba(76, 175, 80, 0.3);
+    border-color: var(--ec-button);
+}
+
+#dropToken {
+    background: var(--ec-red-faint);
+    color: var(--ec-red);
+    border-color: var(--ec-red-dim);
+}
+
+#dropToken:hover {
+    background: rgba(237, 34, 40, 0.15);
+    box-shadow: 0 0 14px var(--ec-red-glow);
+    border-color: var(--ec-red);
+}
+
+#askToken:active,
+#dropToken:active {
+    transform: scale(0.97);
+}
+
+/* === Interface panel === */
+#interfaces {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+#interfaces > div {
+    background: var(--ec-surface);
+    border: 1px solid var(--ec-border);
+    border-left: 3px solid var(--ec-red);
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+/* Interface index label */
+#interfaces > div > span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--ec-red);
+    background: var(--ec-red-faint);
+    border: 1px solid var(--ec-red-dim);
+    border-radius: 4px;
+    margin-right: 0.35rem;
+    flex-shrink: 0;
+}
+
+/* Port buttons inside interface rows */
+#interfaces > div > button {
+    font-family: 'Consolas', 'SF Mono', 'Fira Code', monospace;
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.4rem 0.65rem;
+    background: var(--ec-bg);
+    color: var(--ec-text-dim);
+    border: 1px solid var(--ec-border);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s;
+    white-space: nowrap;
+}
+
+#interfaces > div > button:hover {
+    background: var(--ec-red-faint);
+    border-color: var(--ec-red-dim);
+    color: var(--ec-text-bright);
+}
+
+#interfaces > div > button:active {
+    background: rgba(237, 34, 40, 0.18);
+    border-color: var(--ec-red);
+    color: #fff;
+    box-shadow: 0 0 8px var(--ec-red-glow);
+}
+
+/* === SVG diagram === */
+svg {
+    display: block;
+    background: var(--ec-surface);
+    border: 1px solid var(--ec-border);
+    border-radius: 6px;
+    margin-top: 0.5rem;
+}
+
+/* === SVG internals === */
+.line {
+    stroke-width: 4;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.energy-flow {
+    stroke-dasharray: 10, 10;
+    animation: dash 2s linear infinite;
+}
+
+.energy-flow-off {
+    stroke: var(--ec-border);
+}
+
+@keyframes dash {
+    to {
+        stroke-dashoffset: -20;
+    }
+}
+
+.connector {
+    fill: var(--ec-border-hi);
+    stroke: var(--ec-text-dim);
+    stroke-width: 2;
+    rx: 3;
+    ry: 3;
+}
+
+svg text {
+    fill: var(--ec-text);
+    font-family: 'Consolas', 'SF Mono', 'Fira Code', monospace;
+    font-size: 12px;
+}
+
+/* === Scrollbar (Webkit) === */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--ec-bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--ec-border);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--ec-border-hi);
+}

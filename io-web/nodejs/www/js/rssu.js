@@ -81,7 +81,7 @@ var Interface = function(iface) {
         }
     }
     this.checkStates(this.gpios);
-    
+
     this.update = function(rgpios) {
         console.log(rgpios);
         for(var rgpio of rgpios) {
@@ -105,9 +105,13 @@ var getInterfaceById = function(id) {
 $(function() {
    $("#askToken").on("click", handlers.askToken);
    $("#dropToken").on("click", handlers.dropToken);
+   $("#pullState").on("click", handlers.downloadStateJSON);
 });
 
+let exportAbleState = null
+
 socket.on("state", function(ifaces) {
+    exportAbleState = JSON.stringify(ifaces)
     for(var iface of ifaces) {
         var oiface = getInterfaceById(iface.id);
         if(oiface == null) {
@@ -144,7 +148,18 @@ handlers.setState = function() {
     console.log(this)
 }
 handlers.dropToken = function() {
-    socket.emit('dropToken');
+    socket.emit('dropToken')
+}
+handlers.downloadStateJSON = function() {
+    if(exportAbleState) {
+        const dataUri = "data:application/json;charset=utf-8," + encodeURIComponent(exportAbleState);
+        const a = document.createElement("a");
+        a.href = dataUri;
+        a.download = "smxStateExport.json";
+        a.click();
+    } else {
+        alert("data is not available")
+    }
 }
 
 //todo: attach ui events

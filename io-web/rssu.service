@@ -5,12 +5,12 @@ After=network.target
 [Service]
 Type=simple
 ExecStartPre=/bin/sleep 10
-ExecStart=/usr/bin/node /home/admin/io-web/nodejs/rssu.js
-WorkingDirectory=/home/admin/io-web/nodejs/
+ExecStart=/usr/bin/node /home/admin/io-web/io-web/nodejs/rssu.js
+WorkingDirectory=/home/admin/io-web/io-web/nodejs/
 StandardOutput=append:/var/log/rssu.log
 StandardError=append:/var/log/rssu.log
 Restart=on-failure
-User=pi
+User=admin
 Environment=NODE_ENV=production
 
 [Install]
